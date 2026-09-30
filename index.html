@@ -3,295 +3,469 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Samaversum Gallery</title>
+
+    <!-- Primary Meta Tags -->
+    <title>Samaversum | A Painting Project by Viktor Kadza Jr.</title>
+    <meta name="title" content="Samaversum | A Painting Project by Viktor Kadza Jr.">
+    <meta name="description" content="Samaversum is a painting project exploring the spontaneous formation of pseudo-life forms like Boltzmann Brains with fake memories inside an imaginary universe created by Viktor Kadza Jr.">
+    <meta name="keywords" content="Samaversum, Viktor Kadza Jr, Boltzmann Brain, Digital Art, Painting, Quantum Fluctuations, Pseudo Life Forms, Art Gallery, samaversum.com">
+    <meta name="author" content="Viktor Kadza Jr.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://www.samaversum.com/">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.samaversum.com/">
+    <meta property="og:title" content="Samaversum | A Painting Project by Viktor Kadza Jr.">
+    <meta property="og:description" content="Samaversum explores the spontaneous formation of pseudo-life forms like Boltzmann Brains with fake memories within an imaginary universe.">
+    <meta property="og:image" content="https://www.samaversum.com/favicon.png">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
-        body { background-color: #111111; color: #ffffff; }
-        .card-bg { background-color: #222222; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;600;800&family=JetBrains+Mono:wght@300;500&display=swap');
+
+        body {
+            background-color: #050505;
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
         .accent-red { color: #E60023; }
         .bg-accent-red { background-color: #E60023; }
-        .transition-all { transition: all 0.3s ease; }
-        .diagnostic-log { white-space: pre-wrap; word-break: break-all; font-family: monospace; font-size: 0.75rem; }
+
+        #slideshowModal {
+            backdrop-filter: blur(40px);
+            background: rgba(0, 0, 0, 0.95);
+        }
+
+        .stage-backdrop {
+            background: radial-gradient(circle at center, rgba(230, 0, 35, 0.05) 0%, transparent 70%);
+        }
+
+        .pro-image {
+            box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.8), 0 30px 60px -30px rgba(230, 0, 35, 0.1);
+            transition: all 0.8s cubic-bezier(0.2, 1, 0.3, 1);
+            filter: brightness(0.9);
+        }
+
+        .pro-image:hover {
+            filter: brightness(1);
+            transform: scale(1.02) !important;
+        }
+
+        .thumb-strip {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .thumb-strip::-webkit-scrollbar { display: none; }
+
+        .thumb-item {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            filter: grayscale(100%) opacity(0.3);
+            border: 2px solid transparent;
+        }
+        .thumb-item.active {
+            filter: grayscale(0%) opacity(1);
+            border-color: #E60023;
+            transform: scale(1.1) translateY(-4px);
+            box-shadow: 0 10px 20px -5px rgba(230, 0, 35, 0.3);
+        }
+
+        .progress-bar-container {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.05);
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 50;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: #E60023;
+            width: 0%;
+            transition: width linear;
+            box-shadow: 0 0 10px #E60023;
+        }
+
+        .glass-panel {
+            background: rgba(15, 15, 15, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .ken-burns {
+            animation: kenburns 20s infinite alternate;
+        }
+
+        @keyframes kenburns {
+            from { transform: scale(1) translate(0, 0); }
+            to { transform: scale(1.1) translate(-1%, -1%); }
+        }
+
+        .metadata-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.2em;
+            color: rgba(255, 255, 255, 0.3);
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        .artwork-grid-item {
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .artwork-grid-item:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.7);
+        }
     </style>
 </head>
-<body class="font-sans antialiased">
-    <!-- Navbar -->
-    <nav class="sticky top-0 z-50 bg-[#1A1A1A] px-4 py-3 shadow-lg flex justify-between items-center">
-        <h1 class="text-xl font-bold flex items-center gap-2">
-            <span>🎨</span> Samaversum Gallery
-        </h1>
-        <div class="flex gap-2">
-            <button onclick="showContact()" class="p-2 hover:bg-white/10 rounded-full" title="Send Message">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-            </button>
-            <button onclick="loadArtworks()" class="p-2 hover:bg-white/10 rounded-full" title="Refresh">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
-            </button>
-            <button onclick="startSlideshow()" class="p-2 hover:bg-white/10 rounded-full" title="Slideshow">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m9 8 6 4-6 4Z"/></svg>
-            </button>
+<body class="antialiased selection:bg-red-600/30">
+    <nav class="sticky top-0 z-[60] glass-panel px-8 py-5 flex justify-between items-center">
+        <div class="flex items-center gap-6">
+            <h1 onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="text-2xl font-black tracking-tighter flex items-center gap-2 cursor-pointer">
+                <span class="bg-accent-red text-white p-1 rounded-sm text-sm">S</span> SAMAVERSUM
+            </h1>
+        </div>
+        <div class="flex gap-4 items-center">
+            <button onclick="showContact()" class="text-xs font-bold tracking-widest text-gray-400 hover:text-white transition-colors mr-4">INQUIRE</button>
         </div>
     </nav>
 
-    <!-- Main Content -->
-    <main class="max-w-7xl mx-auto p-4">
-        <!-- Diagnostic/Log Area -->
-        <div id="diagnosticLog" class="hidden mb-4 p-4 bg-gray-900 border border-gray-700 rounded-lg text-orange-400 diagnostic-log"></div>
+    <main class="max-w-[1800px] mx-auto p-8 lg:p-20">
+        <header class="mb-32 max-w-5xl">
+            <div class="flex items-center gap-4 mb-8">
+                <div class="w-12 h-[1px] bg-accent-red"></div>
+                <div class="text-[10px] font-bold text-accent-red tracking-[0.4em] uppercase">A painting project by Viktor Kadza Jr.</div>
+            </div>
+            <h2 class="text-5xl lg:text-8xl font-light mb-12 leading-[1] tracking-tight text-white">
+                <span class="font-extralight text-gray-600">Boltzmann Brain:</span><br>
+                <span class="text-accent-red italic">Pseudo Life</span> in <span class="text-white">Samaversum</span>
+            </h2>
+        </header>
 
-        <!-- Loading State -->
-        <div id="loading" class="flex justify-center items-center py-20">
-            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[#E60023]"></div>
+        <div id="loading" class="flex justify-center items-center py-40">
+            <div class="w-8 h-8 border border-white/10 border-t-accent-red rounded-full animate-spin"></div>
         </div>
 
-        <!-- Grid -->
-        <div id="galleryGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"></div>
-
-        <!-- Empty State -->
-        <div id="emptyState" class="hidden flex flex-col items-center justify-center py-20 text-gray-400">
-            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-4"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
-            <p>No records found</p>
-            <button onclick="loadArtworks()" class="mt-4 bg-accent-red px-6 py-2 rounded-lg text-white hover:bg-red-700">Retry Fetch</button>
-        </div>
+        <div id="galleryGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-10"></div>
     </main>
 
-    <!-- Presentation Modal -->
-    <div id="slideshowModal" class="fixed inset-0 z-[100] bg-black hidden flex-col">
-        <div class="absolute top-4 right-4 z-[110] flex gap-2">
-             <button onclick="closeSlideshow()" class="p-2 bg-black/50 hover:bg-black/80 rounded-full text-white">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-            </button>
-        </div>
-        <div class="flex-1 flex items-center justify-center relative group">
-            <img id="slideshowImage" src="" class="max-h-full max-w-full object-contain transition-opacity duration-700" alt="Slideshow image">
+    <!-- PRO PRESENTATION WIDGET -->
+    <div id="slideshowModal" class="fixed inset-0 z-[100] hidden flex-col transition-all duration-700">
+        <div class="progress-bar-container"><div id="progressBar" class="progress-bar"></div></div>
 
-            <!-- Controls -->
-            <button onclick="prevSlide()" class="absolute left-4 p-4 bg-black/20 hover:bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-            </button>
-            <button onclick="nextSlide()" class="absolute right-4 p-4 bg-black/20 hover:bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+        <div class="flex justify-between items-center px-10 py-8 z-[110]">
+            <div class="flex items-center gap-6">
+                <div id="slideCounter" class="text-[10px] font-mono tracking-widest text-gray-500">01 / 00</div>
+                <div class="h-4 w-[1px] bg-white/10"></div>
+                <button onclick="togglePlayPause()" class="group flex items-center gap-3 text-[10px] font-bold tracking-widest text-white/50 hover:text-white transition-all">
+                    <span id="playStateIcon" class="text-accent-red">
+                        <svg id="playIcon" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                        <svg id="pauseIcon" class="hidden w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h4z"/></svg>
+                    </span>
+                    <span id="playStateText">AUTOPLAY ON</span>
+                </button>
+            </div>
+            <button onclick="closeSlideshow()" class="p-3 hover:bg-accent-red/10 rounded-full text-white transition-all">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
         </div>
-        <div id="slideshowInfo" class="p-6 bg-gradient-to-t from-black to-transparent text-center">
-            <h2 id="slideshowTitle" class="text-xl font-bold mb-2"></h2>
-            <p id="slideshowDesc" class="text-gray-300"></p>
+
+        <div class="flex-1 flex flex-col lg:flex-row min-h-0 relative stage-backdrop">
+            <div class="flex-[2.5] relative flex items-center justify-center p-12 lg:p-20 overflow-hidden">
+                <div class="slideshow-image-container w-full h-full flex items-center justify-center">
+                    <img id="slideshowImage" src="" class="pro-image max-h-full max-w-full object-contain" alt="Current Piece">
+                </div>
+                <button onclick="prevSlide()" class="absolute left-8 p-6 group transition-all">
+                    <svg class="w-10 h-10 text-white/20 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"></path></svg>
+                </button>
+                <button onclick="nextSlide()" class="absolute right-8 p-6 group transition-all">
+                    <svg class="w-10 h-10 text-white/20 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"></path></svg>
+                </button>
+            </div>
+
+            <div id="proMetaPanel" class="flex-1 glass-panel border-l border-white/5 p-16 flex flex-col justify-center overflow-y-auto">
+                <div class="max-w-md mx-auto w-full space-y-10">
+                    <div class="space-y-4">
+                        <span id="proArtist" class="text-accent-red text-[10px] font-black tracking-[0.4em] uppercase"></span>
+                        <h2 id="proTitle" class="text-5xl font-extralight tracking-tighter leading-tight text-white"></h2>
+                        <div id="proDate" class="text-[10px] font-mono text-gray-500 uppercase tracking-widest"></div>
+                    </div>
+
+                    <div class="space-y-6 py-8 border-y border-white/5">
+                        <div class="grid grid-cols-2 gap-8">
+                            <div><span class="metadata-label">Physical Medium</span><span id="proMedium" class="text-sm text-gray-200 font-light"></span></div>
+                            <div><span class="metadata-label">Surface Layer</span><span id="proSurface" class="text-sm text-gray-200 font-light"></span></div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-8">
+                            <div><span class="metadata-label">Dimensions (MM)</span><span id="proDimensions" class="text-sm font-mono text-gray-300"></span></div>
+                            <div><span class="metadata-label">Archive Ref</span><span id="proId" class="text-sm font-mono text-gray-500 uppercase"></span></div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <span class="metadata-label text-accent-red/50">Research Notes</span>
+                        <p id="proDesc" class="text-lg text-gray-400 font-light leading-relaxed italic"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="h-32 glass-panel border-t border-white/5 px-10 flex items-center">
+            <div id="thumbStrip" class="thumb-strip flex gap-6 overflow-x-auto w-full py-4 items-center"></div>
         </div>
     </div>
 
-    <!-- Contact Modal -->
-    <div id="contactModal" class="fixed inset-0 z-[100] bg-black/80 hidden items-center justify-center p-4">
-        <div class="bg-[#1E1E1E] w-full max-w-md rounded-2xl overflow-hidden p-6 shadow-2xl">
-            <h2 class="text-xl font-bold mb-4">Send Message to Samaversum</h2>
-            <div class="space-y-4">
-                <input type="text" id="contactName" placeholder="Your Name" class="w-full bg-[#2A2A2A] border-none rounded-lg p-3 text-white focus:ring-2 focus:ring-[#E60023] outline-none">
-                <input type="email" id="contactEmail" placeholder="Your Email" class="w-full bg-[#2A2A2A] border-none rounded-lg p-3 text-white focus:ring-2 focus:ring-[#E60023] outline-none">
-                <textarea id="contactMessage" placeholder="Message" rows="4" class="w-full bg-[#2A2A2A] border-none rounded-lg p-3 text-white focus:ring-2 focus:ring-[#E60023] outline-none"></textarea>
-                <div class="flex justify-end gap-2 mt-4">
-                    <button onclick="closeContact()" class="px-4 py-2 text-gray-400 hover:text-white">Cancel</button>
-                    <button onclick="sendEmail()" class="bg-accent-red px-6 py-2 rounded-lg text-white hover:bg-red-700">Send Message</button>
-                </div>
-            </div>
+    <div id="contactModal" class="fixed inset-0 z-[200] bg-black/90 hidden items-center justify-center p-8 backdrop-blur-3xl transition-all duration-500">
+        <div class="bg-[#0a0a0a] w-full max-w-2xl rounded-[40px] p-16 shadow-2xl border border-white/5 relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1 bg-accent-red"></div>
+            <button onclick="closeContact()" class="absolute top-8 right-8 text-gray-600 hover:text-white transition-colors">&times;</button>
+            <h2 class="text-4xl font-light tracking-tighter mb-4 text-white">Acquisition Inquiry</h2>
+            <form class="space-y-6" onsubmit="event.preventDefault(); sendEmail();">
+                <input type="text" id="contactName" placeholder="Researcher Name" required class="w-full bg-white/[0.02] border border-white/10 rounded-2xl p-5 text-white outline-none">
+                <input type="email" id="contactEmail" placeholder="Email" required class="w-full bg-white/[0.02] border border-white/10 rounded-2xl p-5 text-white outline-none">
+                <textarea id="contactMessage" placeholder="Message..." required rows="4" class="w-full bg-white/[0.02] border border-white/10 rounded-2xl p-5 text-white outline-none"></textarea>
+                <button type="submit" class="w-full bg-white text-black py-6 rounded-2xl text-[10px] font-black tracking-[0.4em] uppercase hover:bg-accent-red hover:text-white transition-all">DISPATCH SIGNAL</button>
+            </form>
         </div>
     </div>
 
     <script>
         const SUPABASE_URL = 'https://jldabrktsutbeuxxyjjf.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_prpooTOV73w8v6GM13bE2Q_yBI9cyw7';
-        const TABLE_NAME = 'painting';
-        const BUCKET_NAME = 'images';
-
-        // Renamed variable to avoid name conflict with window.supabase global namespace object
-        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
         let artworks = [];
+        let descriptions = {};
         let currentIndex = 0;
-        let slideshowTimer = null;
+        let isAutoplay = false;
+        let autoplayTimer = null;
+        const SLIDE_INTERVAL = 8000;
 
-        function addLog(msg) {
-            const logEl = document.getElementById('diagnosticLog');
-            logEl.classList.remove('hidden');
-            logEl.textContent += (logEl.textContent ? '\n' : '') + msg;
-            console.log(msg);
-        }
+        function syncPlayStateUI() {
+            const play = document.getElementById('playIcon');
+            const pause = document.getElementById('pauseIcon');
+            const txt = document.getElementById('playStateText');
 
-        async function loadArtworks() {
-            showLoading(true);
-            document.getElementById('diagnosticLog').textContent = '';
-            document.getElementById('diagnosticLog').classList.add('hidden');
+            if (!play || !pause || !txt) return;
 
-            try {
-                const { data, error } = await supabaseClient
-                    .from(TABLE_NAME)
-                    .select('*');
-
-                if (error) throw error;
-
-                if (!data || data.length === 0) {
-                    addLog(`No records found in table "${TABLE_NAME}".`);
-                } else {
-                    addLog(`Successfully fetched ${data.length} records.`);
-                }
-
-                artworks = data.map((row, index) => {
-                    const id = row.id || `painting_${index}`;
-                    let title = row.title || row.name || '';
-                    let description = row.description || '';
-                    let imageRef = row.image_large || row.image_url || row.url || row.image || row.path || row.file_name || '';
-
-                    if (!imageRef) {
-                        addLog(`Row ${index} skipped: missing image reference.`);
-                        return null;
-                    }
-
-                    // Normalize reference strings by removing extra spaces and leading/trailing slashes
-                    imageRef = imageRef.toString().trim().replace(/^\/+/, '').replace(/\/+$/, '');
-
-                    let imageUrl = imageRef;
-                    if (!imageRef.startsWith('http')) {
-                        // Match exact logic from main.dart
-                        const fullPath = imageRef.startsWith('public/') ? imageRef : `public/${imageRef}`;
-                        const { data: urlData } = supabaseClient.storage.from(BUCKET_NAME).getPublicUrl(fullPath);
-                        imageUrl = urlData?.publicUrl || '';
-                    }
-
-                    if (!title) {
-                        title = imageRef.split('/').pop().split('.')[0]
-                            .replace(/[-_]/g, ' ')
-                            .split(' ')
-                            .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-                            .join(' ');
-                    }
-
-                    return { id, title, description, imageUrl };
-                }).filter(a => a !== null);
-
-                // Shuffle element arrays randomly
-                artworks.sort(() => Math.random() - 0.5);
-                renderGrid();
-
-                if (artworks.length === 0) {
-                    document.getElementById('emptyState').classList.remove('hidden');
-                } else {
-                    document.getElementById('emptyState').classList.add('hidden');
-                }
-
-            } catch (err) {
-                addLog(`Supabase Error: ${err.message}`);
-                console.error(err);
-            } finally {
-                showLoading(false);
+            if (isAutoplay) {
+                play.classList.add('hidden');
+                pause.classList.remove('hidden');
+                txt.textContent = 'AUTOPLAY ON';
+            } else {
+                play.classList.remove('hidden');
+                pause.classList.add('hidden');
+                txt.textContent = 'AUTOPLAY OFF';
             }
         }
 
-        function renderGrid() {
+        function resolveArtworkImageUrl(value) {
+            if (!value) return '';
+
+            const raw = String(value).trim();
+            if (!raw) return '';
+            if (raw.startsWith('http://') || raw.startsWith('https://') || raw.startsWith('data:')) return raw;
+
+            const normalized = raw.replace(/^\/+/, '').replace(/\/+$/, '');
+            const storagePath = normalized.startsWith('public/') ? normalized : `public/${normalized}`;
+
+            if (!supabaseClient) return '';
+            const { data } = supabaseClient.storage.from('images').getPublicUrl(storagePath);
+            return data?.publicUrl || '';
+        }
+
+        function getArtworkDetails(art) {
+            if (!art) return null;
+            const artId = String(art.id ?? art.artwork_id ?? '');
+            if (!artId) return null;
+            return descriptions[artId] || Object.values(descriptions).find(d => String(d.artwork_id ?? d.artworkId) === artId) || null;
+        }
+
+        async function init() {
+            const loading = document.getElementById('loading');
+            if (loading) loading.classList.remove('hidden');
+
+            try {
+                if (!supabaseClient) {
+                    console.error('Supabase client is unavailable.');
+                    return;
+                }
+
+                const { data: paintData } = await supabaseClient.from('painting').select('*');
+                const { data: descData } = await supabaseClient.from('artwork_description').select('*');
+
+                if (descData) {
+                    descriptions = {};
+                    descData.forEach(d => { descriptions[String(d.artwork_id)] = d; });
+                }
+
+                artworks = (paintData || [])
+                    .map(row => {
+                        const imageUrl = resolveArtworkImageUrl(
+                            row.image_url || row.image_large || row.url || row.image || row.path || row.file_name || ''
+                        );
+                        if (!imageUrl) return null;
+                        return {
+                            ...row,
+                            id: String(row.id ?? row.artwork_id ?? ''),
+                            title: row.title || row.artwork_name || 'Untitled',
+                            description: row.description || '',
+                            imageUrl
+                        };
+                    })
+                    .filter(Boolean);
+
+                if (!artworks.length) {
+                    console.warn('No artworks available from Supabase.');
+                    return;
+                }
+
+                artworks.sort(() => Math.random() - 0.5);
+                renderUI();
+            } catch (err) { console.error(err); }
+            finally {
+                if (loading) loading.classList.add('hidden');
+            }
+        }
+
+        function renderUI() {
             const grid = document.getElementById('galleryGrid');
-            grid.innerHTML = artworks.map((art, idx) => `
-                <div onclick="openSlideshow(${idx})" class="card-bg rounded-xl overflow-hidden cursor-pointer hover:scale-[1.02] transition-all group relative">
-                    <div class="aspect-[3/4] overflow-hidden bg-[#2a2a2a] flex items-center justify-center">
-                        <img src="${art.imageUrl}"
-                             onerror="this.onerror=null; this.src='https://via.placeholder.com/300x400?text=Image+Load+Error'; addLog('Error loading image URL: ' + '${art.imageUrl}');"
-                             class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                             alt="${art.title}"
-                             loading="lazy">
-                    </div>
-                    <div class="p-3 bg-gray-200 text-black">
-                        <h3 class="font-bold truncate text-sm">${art.title}</h3>
+            grid.innerHTML = artworks.map((art, idx) => {
+                const d = getArtworkDetails(art);
+                const dateYear = d?.made_date ? new Date(d.made_date).getFullYear() : '';
+                const titleText = d?.artwork_name || art.title || 'Untitled';
+                const artistText = d?.artist || art.artist || 'SAMACORP';
+                const summaryText = d?.description_text || d?.description || art.description || '';
+                const materialText = d?.medium || 'Theory';
+                return `
+                <div onclick="openSlideshow(${idx})" class="artwork-grid-item group cursor-pointer relative aspect-[3/4] bg-[#0f0f0f] rounded-2xl overflow-hidden border border-white/5">
+                    <img src="${art.imageUrl}" class="w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 transition-all duration-1000" loading="lazy">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80 group-hover:opacity-40 transition-opacity"></div>
+                    <div class="absolute inset-x-0 bottom-0 p-8 flex flex-col justify-end translate-y-6 group-hover:translate-y-0 transition-transform duration-700">
+                        <span class="text-[9px] font-black text-accent-red tracking-[0.3em] uppercase mb-2">${artistText}</span>
+                        <h3 class="text-lg font-light text-white tracking-tighter mb-4">${titleText}</h3>
+                        <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+                            <p class="text-xs text-gray-500 font-light leading-relaxed line-clamp-2 italic mb-4">${summaryText}</p>
+                            <div class="text-[9px] font-mono text-gray-600 uppercase tracking-widest">${dateYear ? dateYear + ' / ' : ''}${materialText}</div>
+                        </div>
                     </div>
                 </div>
+            `;}).join('');
+
+            const strip = document.getElementById('thumbStrip');
+            strip.innerHTML = artworks.map((art, idx) => `
+                <img onclick="goToSlide(${idx})" id="thumb-${idx}" src="${art.imageUrl}"
+                     class="thumb-item h-20 w-20 object-cover rounded-2xl cursor-pointer flex-shrink-0">
             `).join('');
         }
 
-        function showLoading(show) {
-            document.getElementById('loading').classList.toggle('hidden', !show);
-        }
-
-        // Slideshow Logic
         function openSlideshow(index) {
             currentIndex = index;
             updateSlideshow();
             document.getElementById('slideshowModal').classList.remove('hidden');
             document.getElementById('slideshowModal').classList.add('flex');
             document.body.style.overflow = 'hidden';
+            syncPlayStateUI();
         }
 
         function closeSlideshow() {
             document.getElementById('slideshowModal').classList.add('hidden');
-            document.getElementById('slideshowModal').classList.remove('flex');
             document.body.style.overflow = '';
-            stopSlideshowTimer();
+            stopAutoplay();
         }
 
         function updateSlideshow() {
             const art = artworks[currentIndex];
             const img = document.getElementById('slideshowImage');
-            img.style.opacity = 0;
+            if (!art || !img) return;
+
+            const artId = String(art.id ?? '');
+            const d = getArtworkDetails(art);
+
+            img.style.opacity = '0';
+            img.style.transform = 'scale(0.98)';
+
             setTimeout(() => {
-                img.src = art.imageUrl;
                 img.onerror = () => {
-                    addLog('Slideshow image load error: ' + art.imageUrl);
-                    img.src = 'https://via.placeholder.com/800x600?text=Image+Load+Error';
+                    img.style.opacity = '1';
+                    img.style.transform = 'scale(1)';
+                    img.src = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1600"><rect width="100%" height="100%" fill="#111"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#ffffff" font-size="28" font-family="sans-serif">Image unavailable</text></svg>');
                 };
-                document.getElementById('slideshowTitle').textContent = art.title;
-                document.getElementById('slideshowDesc').textContent = art.description;
-                img.style.opacity = 1;
-            }, 300);
+
+                img.onload = () => { img.style.opacity = '1'; img.style.transform = 'scale(1)'; };
+                img.src = art.imageUrl;
+
+                document.getElementById('slideCounter').textContent = `${(currentIndex + 1).toString().padStart(2, '0')} / ${artworks.length.toString().padStart(2, '0')}`;
+                document.getElementById('proTitle').textContent = d ? (d.artwork_name || art.title) : art.title;
+                document.getElementById('proArtist').textContent = d ? (d.artist || 'Viktor Kadza Jr.') : 'Viktor Kadza Jr.';
+                document.getElementById('proDate').textContent = d?.made_date ? new Date(d.made_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : '';
+                document.getElementById('proMedium').textContent = d ? (d.medium || 'Research Medium') : 'Research Medium';
+                document.getElementById('proSurface').textContent = d ? (d.surface || 'Surface Theory') : 'Surface Theory';
+                document.getElementById('proDimensions').textContent = d ? `${d.width_mm}w * ${d.height_mm}h mm` : 'Variable';
+                document.getElementById('proId').textContent = artId.substring(0, 8).toUpperCase();
+                document.getElementById('proDesc').textContent = d ? (d.description_text || art.description || 'Metadata pending archival verification.') : (art.description || 'Metadata pending archival verification.');
+
+                document.querySelectorAll('.thumb-item').forEach(t => t.classList.remove('active'));
+                const t = document.getElementById(`thumb-${currentIndex}`);
+                if (t) { t.classList.add('active'); t.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); }
+
+                if (isAutoplay) resetProgressBar();
+            }, 400);
         }
 
-        function nextSlide() {
-            currentIndex = (currentIndex + 1) % artworks.length;
-            updateSlideshow();
+        function togglePlayPause() {
+            isAutoplay = !isAutoplay;
+            syncPlayStateUI();
+            if (isAutoplay) {
+                startAutoplay();
+            } else {
+                stopAutoplay();
+            }
         }
 
-        function prevSlide() {
-            currentIndex = (currentIndex - 1 + artworks.length) % artworks.length;
-            updateSlideshow();
+        function startAutoplay() {
+            stopAutoplay();
+            resetProgressBar();
+            autoplayTimer = setInterval(nextSlide, SLIDE_INTERVAL);
         }
 
-        function startSlideshow() {
-            if (artworks.length === 0) return;
-            openSlideshow(0);
-            startSlideshowTimer();
+        function stopAutoplay() {
+            if (autoplayTimer) clearInterval(autoplayTimer);
+            document.getElementById('progressBar').style.width = '0%';
         }
 
-        function startSlideshowTimer() {
-            stopSlideshowTimer();
-            slideshowTimer = setInterval(nextSlide, 5000);
+        function resetProgressBar() {
+            const bar = document.getElementById('progressBar');
+            bar.style.transition = 'none';
+            bar.style.width = '0%';
+            setTimeout(() => {
+                bar.style.transition = `width ${SLIDE_INTERVAL}ms linear`;
+                bar.style.width = '100%';
+            }, 50);
         }
 
-        function stopSlideshowTimer() {
-            if (slideshowTimer) clearInterval(slideshowTimer);
-        }
+        function nextSlide() { currentIndex = (currentIndex + 1) % artworks.length; updateSlideshow(); }
+        function prevSlide() { currentIndex = (currentIndex - 1 + artworks.length) % artworks.length; updateSlideshow(); }
+        function goToSlide(idx) { currentIndex = idx; updateSlideshow(); }
+        function showContact() { document.getElementById('contactModal').classList.remove('hidden'); document.getElementById('contactModal').classList.add('flex'); }
+        function closeContact() { document.getElementById('contactModal').classList.add('hidden'); }
+        function sendEmail() { window.location.href = `mailto:samaversum@gmail.com?subject=Inquiry&body=Message...`; closeContact(); }
 
-        // Contact Logic
-        function showContact() {
-            document.getElementById('contactModal').classList.remove('hidden');
-            document.getElementById('contactModal').classList.add('flex');
-        }
-
-        function closeContact() {
-            document.getElementById('contactModal').classList.add('hidden');
-            document.getElementById('contactModal').classList.remove('flex');
-        }
-
-        function sendEmail() {
-            const name = document.getElementById('contactName').value.trim();
-            const email = document.getElementById('contactEmail').value.trim();
-            const message = document.getElementById('contactMessage').value.trim();
-            const subject = encodeURIComponent(`Samaversum Inquiry from ${name}`);
-            const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`);
-            window.location.href = `mailto:samaversum@gmail.com?subject=${subject}&body=${body}`;
-            closeContact();
-        }
-
-        // Initialize
-        loadArtworks();
-
+        init();
         window.addEventListener('keydown', (e) => {
             if (document.getElementById('slideshowModal').classList.contains('hidden')) return;
             if (e.key === 'ArrowRight') nextSlide();
             if (e.key === 'ArrowLeft') prevSlide();
             if (e.key === 'Escape') closeSlideshow();
+            if (e.key === ' ') { e.preventDefault(); togglePlayPause(); }
         });
     </script>
 </body>
