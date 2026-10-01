@@ -34,6 +34,7 @@
 
         .accent-red { color: #E60023; }
         .bg-accent-red { background-color: #E60023; }
+        .headline-accent { color: #A80020; }
 
         #slideshowModal {
             backdrop-filter: blur(40px);
@@ -146,7 +147,7 @@
             </div>
             <h2 class="text-5xl lg:text-8xl font-light mb-12 leading-[1] tracking-tight text-white">
                 <span class="font-extralight text-gray-600">Boltzmann Brain:</span><br>
-                <span class="text-accent-red italic">Pseudo Life</span> in <span class="text-white">Samaversum</span>
+                <span class="headline-accent italic">Pseudo Life</span> in <span class="text-white">Samaversum</span>
             </h2>
         </header>
 
@@ -156,6 +157,19 @@
 
         <div id="galleryGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-10"></div>
     </main>
+
+    <footer class="border-t border-white/10">
+        <div class="max-w-[1800px] mx-auto px-8 py-12 lg:px-20 grid gap-10 sm:grid-cols-2">
+            <div>
+                <span class="metadata-label">Project Note</span>
+                <p class="max-w-xl text-sm leading-relaxed text-gray-400">Samaversum is a speculative painting project exploring pseudo-life, memory, and artificial selfhood inside an imagined universe.</p>
+            </div>
+            <div>
+                <span class="metadata-label">Archive Note</span>
+                <p class="max-w-xl text-sm leading-relaxed text-gray-400">Artwork descriptions and metadata are presented as part of an evolving visual archive.</p>
+            </div>
+        </div>
+    </footer>
 
     <!-- PRO PRESENTATION WIDGET -->
     <div id="slideshowModal" class="fixed inset-0 z-[100] hidden flex-col transition-all duration-700">
@@ -184,7 +198,7 @@
         </div>
 
         <div class="flex-1 flex flex-col lg:flex-row min-h-0 relative stage-backdrop">
-            <div class="flex-[2.5] relative flex items-center justify-center p-12 lg:p-20 overflow-hidden">
+            <div class="flex-[3] relative flex items-center justify-center p-4 pl-12 lg:p-8 lg:pl-16 overflow-hidden">
                 <div class="slideshow-image-container w-full h-full flex items-center justify-center">
                     <img id="slideshowImage" src="" class="pro-image max-h-full max-w-full object-contain" alt="Current Piece">
                 </div>

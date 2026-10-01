@@ -1,6 +1,7 @@
 const SUPABASE_URL = 'https://jldabrktsutbeuxxyjjf.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_prpooTOV73w8v6GM13bE2Q_yBI9cyw7';
 const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+const SLIDESHOW_STATE_KEY = 'samaversum.slideshowState';
 
 let artworks = [];
 let descriptions = {};
@@ -8,6 +9,37 @@ let currentIndex = 0;
 let isAutoplay = false;
 let autoplayTimer = null;
 const SLIDE_INTERVAL = 8000;
+
+function saveSlideshowState() {
+    const modal = document.getElementById('slideshowModal');
+    const art = artworks[currentIndex];
+    if (!modal || modal.classList.contains('hidden') || !art) return;
+
+    try {
+        sessionStorage.setItem(SLIDESHOW_STATE_KEY, JSON.stringify({
+            artworkId: String(art.id ?? ''),
+            index: currentIndex,
+            isAutoplay
+        }));
+    } catch (err) { console.warn('Unable to save slideshow state:', err); }
+}
+
+function restoreSlideshowState() {
+    let savedState;
+    try {
+        savedState = JSON.parse(sessionStorage.getItem(SLIDESHOW_STATE_KEY) || 'null');
+    } catch (err) { return; }
+    if (!savedState) return;
+
+    const artworkIndex = artworks.findIndex(art => String(art.id ?? '') === String(savedState.artworkId ?? ''));
+    const savedIndex = Number(savedState.index);
+    const index = artworkIndex >= 0
+        ? artworkIndex
+        : Number.isInteger(savedIndex) && savedIndex >= 0 && savedIndex < artworks.length ? savedIndex : 0;
+
+    openSlideshow(index);
+    if (savedState.isAutoplay === true) togglePlayPause();
+}
 
 function syncPlayStateUI() {
     const play = document.getElementById('playIcon');
@@ -90,6 +122,7 @@ async function init() {
 
         artworks.sort(() => Math.random() - 0.5);
         renderUI();
+        restoreSlideshowState();
     } catch (err) { console.error(err); }
     finally {
         if (loading) loading.classList.add('hidden');
@@ -141,6 +174,7 @@ function openSlideshow(index) {
     modal.classList.add('flex');
     document.body.style.overflow = 'hidden';
     syncPlayStateUI();
+    saveSlideshowState();
 }
 
 function closeSlideshow() {
@@ -149,7 +183,10 @@ function closeSlideshow() {
         modal.classList.add('hidden');
     }
     document.body.style.overflow = '';
+    isAutoplay = false;
     stopAutoplay();
+    syncPlayStateUI();
+    try { sessionStorage.removeItem(SLIDESHOW_STATE_KEY); } catch (err) { console.warn('Unable to clear slideshow state:', err); }
     if (document.fullscreenElement) {
         document.exitFullscreen?.();
     }
@@ -170,6 +207,7 @@ function updateSlideshow() {
     const art = artworks[currentIndex];
     const img = document.getElementById('slideshowImage');
     if (!art || !img) return;
+    saveSlideshowState();
 
     const artId = String(art.id ?? '');
     const d = getArtworkDetails(art);
@@ -213,6 +251,7 @@ function togglePlayPause() {
     } else {
         stopAutoplay();
     }
+    saveSlideshowState();
 }
 
 function startAutoplay() {
